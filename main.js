@@ -2,13 +2,15 @@ const {JSDOM} = require("jsdom");
 const {window} = new JSDOM("");
 const $ = require("jquery")(window);
 
-const Octokat = require("octokat");
-const github = new Octokat({'token': process.env.GITHUB_TOKEN});
+const {Octokit} = require("@octokit/rest");
+const github = new Octokit({'auth': process.env.GITHUB_TOKEN});
 console.log("created: " + github.toString());
 
 const express = require('express');
 const app = express();
 
+const GITHUB_USER = "password-manager-resources-bot";
+const GITHUB_REPO = "password-manager-resources";
 
 app.listen(process.env.PORT || 3000, () => console.log("listen on port 3000!"));
 app.use(express.static('public'));
@@ -16,14 +18,12 @@ app.use(express.json());
 
 app.post('/api', (request, response) => {
     console.log(request.body);
-    pullRequest("password-manager-resources-bot/password-manager-resources", request.body['url'], request.body['rule']);
+    pullRequest(request.body.url, request.body.rule, request.body.image);
 });
 
-function pullRequest(repositoryURL, url, rule) {
+function pullRequest(url, rule, image) {
 
-    let repo = getRepo(repositoryURL);
-
-    $.getJSON('https://raw.githubusercontent.com/password-manager-resources-bot/password-manager-resources/master/quirks/password-rules.json', function (passwordRules) {
+    $.getJSON('https://raw.githubusercontent.com/apple/password-manager-resources/master/quirks/password-rules.json', function (passwordRules) {
 
         passwordRules[url] = {'password-rules': rule};
 
@@ -32,27 +32,38 @@ function pullRequest(repositoryURL, url, rule) {
             passwordRulesSorted[each] = passwordRules[each];
         });
 
-        repo.branches("master").fetch().then((data) => {
+        github.repos.getBranch({
+            owner: GITHUB_USER,
+            repo: GITHUB_REPO,
+            branch: "master"
+        }).then((data) => {
 
             console.log("master branch found!");
-            let master_sha = data["commit"]["sha"];
 
-            repo.git.refs.create({
+            let master_sha = data.commit.sha;
+
+            github.git.createRef({
+                owner: GITHUB_USER,
+                repo: GITHUB_REPO,
                 ref: "refs/heads/" + url,
                 sha: master_sha
             }).then(() => {
                 console.log("Branch created!");
 
-                createCommit(repo, "quirks/password-rules.json", passwordRulesSorted, url)
+                createCommit("quirks/password-rules.json", passwordRulesSorted, url)
                     .then((b) => {
                         setTimeout(() => {
-                            getRepo("password-manager-resources-bot/password-manager-resources").pulls.create({
+                            github.pulls.create({
+                                owner: GITHUB_USER, //TODO change to "apple"
+                                repo: GITHUB_REPO,
                                 title: `Add website ${url} | This PR was created automatically, please ignore it until this feature is ready to use!`,
-                                body: "**Don't** pull these changes in, will be closed shortly.",
                                 head: "password-manager-resources-bot:" + url,
-                                base: "master" // change to master
+                                base: "master",
+                                body: "**Don't** pull these changes in, will be closed shortly.\n" +
+                                    `![](${picture})`,
+                                maintainer_can_modify: true
                             }).then(() => {
-                                console.log("PR created to " + repositoryURL);
+                                console.log("PR created to " + "bot"); //TODO
                             }).catch((err) => {
                                 console.log("Can't create PR!");
                                 console.log(err);
@@ -68,24 +79,18 @@ function pullRequest(repositoryURL, url, rule) {
     });
 }
 
-const getRepo = (repositoryUrl) => {
-
-    const [user, repoName] = repositoryUrl.split('/');
-
-    if (user === null || repoName === null) {
-        console.log("Please specify a repo");
-        return;
-    }
-
-    return github.repos(user, repoName);
-}
-
-const createCommit = async (repo, filename, data, url) => {
+async function createCommit(filename, data, url) {
     try {
-        const path = filename.toLowerCase();
-        let main = await repo.git.refs("heads/" + url).fetch();
+        const path = filename;
+        let main = await github.git.getRef({
+            owner: GITHUB_USER,
+            repo: GITHUB_REPO,
+            ref: "heads/" + url
+        });
         let treeItems = [];
-        let file = await repo.git.blobs.create({
+        let file = await github.git.createBlob({
+            owner: GITHUB_USER,
+            repo: GITHUB_REPO,
             content: Buffer.from(JSON.stringify(data, null, 4,)).toString('base64'),
             encoding: 'base64'
         });
@@ -97,14 +102,17 @@ const createCommit = async (repo, filename, data, url) => {
             type: "blob"
         });
 
-        let tree = await repo.git.trees.create({
+        let tree = await github.git.createTree({
+            owner: GITHUB_USER,
+            repo: GITHUB_REPO,
             tree: treeItems,
             base_tree: main.object.sha
         });
 
-        let commit = await repo.git.commits.create({
-            //Commit message
-            message: `Created via Web - ${url}`,
+        let commit = await github.git.createCommit({
+            owner: GITHUB_USER,
+            repo: GITHUB_REPO,
+            message: `Created via web-interface - ${url}`,
             tree: tree.sha,
             parents: [main.object.sha]
         });

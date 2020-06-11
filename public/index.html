@@ -5,16 +5,18 @@
 </head>
 <body>
 
-<form onsubmit="validateForm()" name="generator">
+<form onsubmit="validateForm(imgURL)" name="generator">
 
     <label for="url">Website URL: </label>
     <input type="text" id="url" name="URL" required><br><br>
 
-    <label for="picture">Upload File:</label><br>
-    <input type="file" name="fileToUpload" id="picture" accept="image/png, image/jpeg" required><br><br>
+    <label for="image">Upload File:</label><br>
+    <input type="file" id="image" accept="image/png, image/jpeg" required><br><br>
 
-    <label for="minlength">Minimum Length: </label><input id="minlength" type="number" class="length" required><br>
-    <label for="maxlength"></label>Maximum Length: <input id="maxlength" type="number" class="length" required><br><br>
+    <label for="minlength">Minimum Length: </label>
+    <input id="minlength" type="number" class="length" required pattern="[0-9]{1,2}"><br>
+    <label for="maxlength">Maximum Length: </label>
+    <input id="maxlength" type="number" class="length" required pattern="[0-9]{1,2}"><br><br>
 
     <table>
         <tr>
@@ -71,12 +73,14 @@
 </body>
 <script>
 
+    let imgURL = "";
+
     document.getElementById("choose_special").value = "-~!@#$%^&*_+=`|(){}[:;\"'<>,.?]";
 
     function clickedCheckbox(source) {
 
         let bool = document.getElementById("req_" + source).checked;
-        
+
         document.getElementById("min_" + source).hidden = !bool;
         document.getElementById("alwd_" + source).checked = bool;
         document.getElementById("alwd_" + source).disabled = bool;
@@ -84,6 +88,10 @@
         if (source === 'special') {
             document.getElementById("choose_" + source).hidden = !bool;
         }
+    }
+
+    document.getElementById("image").onchange = function () {
+        imgURL = pictureUpload(document.getElementById("image").files[1]);
     }
 
 </script>
