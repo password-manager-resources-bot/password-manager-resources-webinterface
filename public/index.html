@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Website submit form for password managers</title>
+</head>
+<body>
+
+<form onsubmit="validateForm()" name="generator">
+
+    <label for="url">Website URL: </label>
+    <input type="text" id="url" name="URL" required><br><br>
+
+    <label for="picture">Upload File:</label><br>
+    <input type="file" name="fileToUpload" id="picture" accept="image/png, image/jpeg" required><br><br>
+
+    <label for="minlength">Minimum Length: </label><input id="minlength" type="number" class="length" required><br>
+    <label for="maxlength"></label>Maximum Length: <input id="maxlength" type="number" class="length" required><br><br>
+
+    <table>
+        <tr>
+            <th>Chars</th>
+            <th>Allowed</th>
+            <th>Required</th>
+            <th>Minimal occurrences</th>
+        </tr>
+        <tr>
+            <td><label>Digits (0-9)</label></td>
+            <td><input type="checkbox" id="alwd_digit" disabled checked></td>
+            <td><input type="checkbox" id="req_digit" onclick="clickedCheckbox('digit')" checked></td>
+            <td><input type="number" id="min_digit" value="1"></td>
+        </tr>
+        <tr>
+            <td><label>Lower case letters (a-z)</label></td>
+            <td><input type="checkbox" id="alwd_lower" disabled checked></td>
+            <td><input type="checkbox" id="req_lower" onclick="clickedCheckbox('lower')" checked></td>
+            <td><input type="number" id="min_lower" value="1"></td>
+        </tr>
+        <tr>
+            <td><label>Upper case letters (A-Z)</label></td>
+            <td><input type="checkbox" id="alwd_upper" disabled checked></td>
+            <td><input type="checkbox" id="req_upper" onclick="clickedCheckbox('upper')" checked></td>
+            <td><input type="number" id="min_upper" value="1"></td>
+        </tr>
+        <tr>
+            <td><label>Special characters -~!@#$%^&*_+=`|(){}[:;"'<>,.?]</label></td>
+            <td><input type="checkbox" id="alwd_special"></td>
+            <td><input type="checkbox" id="req_special" onclick="clickedCheckbox('special')"></td>
+            <td><input type="number" id="min_special" value="1" hidden></td>
+            <td><input type="text" id="choose_special" hidden></td>
+        </tr>
+        <tr>
+            <td><label>ASCII printable chars</label></td>
+            <td><input type="checkbox" id="alwd_ascii"></td>
+            <td><input type="checkbox" id="req_ascii" onclick="clickedCheckbox('ascii')"></td>
+            <td><input type="number" id="min_ascii" value="1" hidden></td>
+        </tr>
+        <tr>
+            <td><label>Unicode chars</label></td>
+            <td><input type="checkbox" id="alwd_unicode"></td>
+            <td><input type="checkbox" id="req_unicode" onclick="clickedCheckbox('unicode')"></td>
+            <td><input type="number" id="min_unicode" value="1" hidden></td>
+        </tr>
+
+    </table>
+
+    <br>
+    <input type="submit" value="Submit Website">
+
+</form>
+
+</body>
+<script>
+
+    document.getElementById("choose_special").value = "-~!@#$%^&*_+=`|(){}[:;\"'<>,.?]";
+
+    function clickedCheckbox(source) {
+
+        let bool = document.getElementById("req_" + source).checked;
+        
+        document.getElementById("min_" + source).hidden = !bool;
+        document.getElementById("alwd_" + source).checked = bool;
+        document.getElementById("alwd_" + source).disabled = bool;
+
+        if (source === 'special') {
+            document.getElementById("choose_" + source).hidden = !bool;
+        }
+    }
+
+</script>
+</html>
