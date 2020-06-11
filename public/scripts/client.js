@@ -1,4 +1,4 @@
-function validateForm(){
+function validateForm() {
     //TODO: create rule from form
 
     let url = document.getElementById("url").value;
@@ -15,6 +15,8 @@ function validateForm(){
 
     fetch('/api', options).then(r => {
         console.log(r);
+    }).catch(err => {
+        console.log(err);
     });
 
 }

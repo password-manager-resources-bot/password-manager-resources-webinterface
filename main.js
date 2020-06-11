@@ -3,8 +3,8 @@ const {window} = new JSDOM("");
 const $ = require("jquery")(window);
 
 const Octokat = require("octokat");
-const token = process.env.GITHUB_TOKEN;
-const github = new Octokat({'token': token});
+const github = new Octokat({'token': process.env.GITHUB_TOKEN});
+console.log("created: " + github.toString());
 
 const express = require('express');
 const app = express();
