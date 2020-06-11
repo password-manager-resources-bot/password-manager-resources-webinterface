@@ -3,11 +3,12 @@ const {window} = new JSDOM("");
 const $ = require("jquery")(window);
 
 const Octokat = require("octokat");
-const token = "3549980cf6de5b15aa418e6b7b7256dca21c6509";
+const token = process.env.GITHUB_TOKEN;
 const github = new Octokat({'token': token});
 
 const express = require('express');
 const app = express();
+
 
 app.listen(process.env.PORT || 3000, () => console.log("listen on port 3000!"));
 app.use(express.static('public'));
