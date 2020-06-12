@@ -1,27 +1,57 @@
 const {JSDOM} = require("jsdom");
 const {window} = new JSDOM("");
 const $ = require("jquery")(window);
+const request = require('request');
 
 const {Octokit} = require("@octokit/rest");
 const github = new Octokit({'auth': process.env.GITHUB_TOKEN});
-console.log("created: " + github.toString());
 
 const express = require('express');
 const app = express();
 
+let image;
+
 const GITHUB_USER = "password-manager-resources-bot";
 const GITHUB_REPO = "password-manager-resources";
 
-app.listen(process.env.PORT || 3000, () => console.log("listen on port 3000!"));
+app.listen(process.env.PORT || 3000, () => console.log("listen!"));
 app.use(express.static('public'));
 app.use(express.json());
 
 app.post('/api', (request, response) => {
     console.log(request.body);
-    pullRequest(request.body.url, request.body.rule, request.body.image);
+
+    const imageURL = uploadImage();
+    pullRequest(request.body.url, request.body.rule, imageURL);
+
 });
 
-function pullRequest(url, rule, image) {
+app.post('/images', (req) => {
+    image = req.body.image;
+});
+
+function uploadImage() {
+
+    return new Promise((resolve, reject) => {
+        request.post({
+                url: `https://api.imgbb.com/1/upload`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                formData: {image: image, key: process.env.IMGBB_API_KEY}
+            },
+            (err, httpResponse, body) => {
+                if (err) {
+                    console.error('Upload failed:\n', err);
+                    reject(err);
+                }
+                resolve(JSON.parse(body).data.url);
+            });
+    });
+
+}
+
+function pullRequest(url, rule, imageURL) {
 
     $.getJSON('https://raw.githubusercontent.com/apple/password-manager-resources/master/quirks/password-rules.json', function (passwordRules) {
 
@@ -60,7 +90,7 @@ function pullRequest(url, rule, image) {
                                 head: "password-manager-resources-bot:" + url,
                                 base: "master",
                                 body: "**Don't** pull these changes in, will be closed shortly.\n" +
-                                    `![](${picture})`,
+                                    `![](${imageURL})`,
                                 maintainer_can_modify: true
                             }).then(() => {
                                 console.log("PR created to " + "bot"); //TODO

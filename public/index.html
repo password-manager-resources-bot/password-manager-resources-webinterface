@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
     <title>Website submit form for password managers</title>
 </head>
 <body>
 
-<form onsubmit="validateForm(imgURL)" name="generator">
+<form onsubmit="return validateForm()" name="generator">
 
     <label for="url">Website URL: </label>
     <input type="text" id="url" name="URL" required><br><br>
@@ -69,11 +70,9 @@
     <input type="submit" value="Submit Website">
 
 </form>
-
-</body>
 <script>
 
-    let imgURL = "";
+    let img;
 
     document.getElementById("choose_special").value = "-~!@#$%^&*_+=`|(){}[:;\"'<>,.?]";
 
@@ -90,9 +89,43 @@
         }
     }
 
-    document.getElementById("image").onchange = function () {
-        imgURL = pictureUpload(document.getElementById("image").files[1]);
+    function uploadFileToServer(file) {
+        console.log(file);
+        const reader = new FileReader();
+        reader.readAsBinaryString(file);
+
+        reader.onload = function () {
+            console.log(img = btoa(reader.result));
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({image: img}),
+                processData: false
+            };
+
+            fetch('/images', options).then(r => {
+                console.log(r);
+            }).catch(err => {
+                console.log(err);
+            });
+
+
+        };
+        reader.onerror = function () {
+            console.log('there are some problems');
+        };
     }
 
+    document.getElementById("image").onchange = function () {
+        uploadFileToServer(document.getElementById("image").files[0]);
+    };
+
+
 </script>
+
+</body>
+<script src="scripts/client.js"></script>
 </html>

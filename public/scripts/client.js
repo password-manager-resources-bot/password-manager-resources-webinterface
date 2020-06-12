@@ -1,9 +1,11 @@
-async function validateForm(imgURL) {
+async function validateForm() {
 
     let url = document.getElementById("url").value;
+
     const rule = createRuleString();
 
     const data = {url: url, rule: rule, image: imgURL};
+
     const options = {
         method: 'POST',
         headers: {
@@ -17,6 +19,8 @@ async function validateForm(imgURL) {
     }).catch(err => {
         console.log(err);
     });
+
+    return false;
 
 }
 
@@ -34,58 +38,43 @@ function createRuleString() {
 
     let chooseSpecial = document.getElementById("choose_special").value
         = document.getElementById("choose_special").value
+        .replace('\\', '\\\\')
         .replace('\[', '\\\[')
         .replace('\]', '\\\]')
         .replace('\"', '\\\"')
         .replace("\'", '\\\'')
-        .replace('\\', '\\\\');
 
-    for (let type in charTypes) {
+    console.log(chooseSpecial)
+
+    charTypes.forEach((type) => {
+        console.log(type);//
         let req = document.getElementById("req_" + type).checked;
         if (req) {
-            required.concat("required: ");
+            console.log(req)//
+            required = required.concat("required: ");
             let i = 0;
             while (i < document.getElementById("min_" + type).value) {
+                console.log("running...")//
                 if (type === "special")
-                    allowed.concat(`[${chooseSpecial}], `)
+                    allowed = allowed.concat(`[${chooseSpecial}], `)
                 else
-                    required.concat(type + ",");
+                    required = required.concat(type, ', ');
                 i++;
             }
-            required.slice(0, required.length - 1);
         } else {
             if (document.getElementById("alwd_" + type).checked) {
                 if (type === "special")
-                    allowed.concat(`[${chooseSpecial}], `)
+                    allowed = allowed.concat(`[${chooseSpecial}], `)
                 else
-                    allowed.concat(type + ', ')
+                    allowed = allowed.concat(type + ', ')
             }
         }
-    }
-
-    allowed.trimEnd().slice(0, allowed.length - 1);
-    return rule.concat(required, allowed);
-
-}
-
-async function pictureUpload(file) {
-    let form = new FormData();
-    form.append("image", file)
-
-    let settings = {
-        "url": "https://api.imgbb.com/1/upload?key=6bd420fada17185594cfa7b12f95f0a5",
-        "method": "POST",
-        "timeout": 0,
-        "processData": false,
-        "mimeType": "multipart/form-data",
-        "contentType": false,
-        "data": form
-    };
-
-
-    await $.ajax(settings).done(function (response) {
-        console.log(response);
-        let jx = JSON.parse(response);
-        return jx.data.url
     });
+
+    allowed = allowed.slice(0, allowed.length - 2);
+    if (allowed === "allowed")
+        required = required.slice(0, required.length - 2);
+
+    return rule.concat(required, allowed === "allowed" ? "" : allowed);
+
 }
