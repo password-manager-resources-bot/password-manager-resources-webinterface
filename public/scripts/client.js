@@ -48,16 +48,16 @@ function uploadFileToServer(file) {
 }
 
 function chooseSpecial() {
-    $("choose_special").hidden = $("alwd_special");
+    document.getElementById("choose_special").hidden = document.getElementById("alwd_special").checked;
 }
 
 function clickedCheckbox(source) {
 
-    let bool = $("req_" + source).checked;
+    let bool = document.getElementById("req_" + source).checked;
 
-    $("min_" + source).hidden = !bool;
-    $("alwd_" + source).checked = bool;
-    $("alwd_" + source).disabled = bool;
+    document.getElementById("min_" + source).hidden = !bool;
+    document.getElementById("alwd_" + source).checked = bool;
+    document.getElementById("alwd_" + source).disabled = bool;
 
     if (source === 'special') {
         chooseSpecial();
