@@ -46,7 +46,7 @@ function uploadFileToServer(file) {
 }
 
 function chooseSpecial() {
-    document.getElementById("choose_special").hidden = !document.getElementById("alwd_special").checked;
+    document.getElementById("choose_special_container").hidden = !document.getElementById("alwd_special").checked;
 }
 
 function clickedCheckbox(source) {
