@@ -86,6 +86,7 @@
         e.preventDefault();
         if ($("#generator").valid()) {
             validateForm().then(res => {
+                console.log(res);
                 window.location.replace("thanks_for_contribute.html"); //TODO open onother html page in same tab
             });
         }
