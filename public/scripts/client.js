@@ -13,11 +13,7 @@ async function validateForm() {
         body: JSON.stringify(data)
     };
 
-    fetch('/api', options).then(r => {
-        console.log(r);
-    }).catch(err => {
-        console.log(err);
-    });
+    await fetch('/api', options);
     return false;
 
 }
