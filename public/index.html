@@ -72,57 +72,11 @@
 </form>
 <script>
 
-    let img;
-
     document.getElementById("choose_special").value = "-~!@#$%^&*_+=`|(){}[:;\"'<>,.?]";
-
-    function clickedCheckbox(source) {
-
-        let bool = document.getElementById("req_" + source).checked;
-
-        document.getElementById("min_" + source).hidden = !bool;
-        document.getElementById("alwd_" + source).checked = bool;
-        document.getElementById("alwd_" + source).disabled = bool;
-
-        if (source === 'special') {
-            document.getElementById("choose_" + source).hidden = !bool;
-        }
-    }
-
-    function uploadFileToServer(file) {
-        console.log(file);
-        const reader = new FileReader();
-        reader.readAsBinaryString(file);
-
-        reader.onload = function () {
-            console.log(img = btoa(reader.result));
-
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({image: img}),
-                processData: false
-            };
-
-            fetch('/images', options).then(r => {
-                console.log(r);
-            }).catch(err => {
-                console.log(err);
-            });
-
-
-        };
-        reader.onerror = function () {
-            console.log('there are some problems');
-        };
-    }
 
     document.getElementById("image").onchange = function () {
         uploadFileToServer(document.getElementById("image").files[0]);
     };
-
 
 </script>
 

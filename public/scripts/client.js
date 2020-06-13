@@ -1,10 +1,9 @@
 async function validateForm() {
 
     let url = document.getElementById("url").value;
-
     const rule = createRuleString();
 
-    const data = {url: url, rule: rule, image: imgURL};
+    const data = {url: url, rule: rule};
 
     const options = {
         method: 'POST',
@@ -19,9 +18,49 @@ async function validateForm() {
     }).catch(err => {
         console.log(err);
     });
-
     return false;
 
+}
+
+
+function uploadFileToServer(file) {
+
+    let img;
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+
+    reader.onload = function () {
+        console.log(img = btoa(reader.result));
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({image: img}),
+            processData: false
+        };
+
+        fetch('/images', options).then(r => {
+            console.log(r);
+        }).catch(err => {
+            console.log(err);
+        });
+
+    };
+}
+
+function clickedCheckbox(source) {
+
+    let bool = document.getElementById("req_" + source).checked;
+
+    document.getElementById("min_" + source).hidden = !bool;
+    document.getElementById("alwd_" + source).checked = bool;
+    document.getElementById("alwd_" + source).disabled = bool;
+
+    if (source === 'special') {
+        document.getElementById("choose_" + source).hidden = !bool;
+    }
 }
 
 function createRuleString() {
