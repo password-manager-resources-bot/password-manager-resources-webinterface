@@ -49,7 +49,7 @@
         </tr>
         <tr>
             <td><label>Special characters (?!-;˜...)</label></td>
-            <td><input type="checkbox" id="alwd_special" onsubmit="chooseSpecial()"></td>
+            <td><input type="checkbox" id="alwd_special" onclick="chooseSpecial()"></td>
             <td><input type="checkbox" id="req_special" onclick="clickedCheckbox('special')"></td>
             <td><input type="number" id="min_special" value="1" hidden></td>
             <td><input type="text" id="choose_special" hidden placeholder="-~!@#$%^&*_+=`\|(){}[]:;'<>,.?"></td>
@@ -83,12 +83,9 @@
     document.getElementById("generator").onsubmit = function (e) {
         e.preventDefault();
         if ($("#generator").valid()) {
-            validateForm().then(res => {
-                //console.log(res);
+            validateForm().then(() => {
                 window.location.replace("thanks_for_contribute.html");
-            }).catch(err => {
-                //console.log(err);
-            });
+            }).catch();
         }
     }
 

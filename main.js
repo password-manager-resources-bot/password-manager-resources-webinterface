@@ -8,7 +8,7 @@ const $ = require("jquery")(window);
 const request = require('request');
 
 const {Octokit} = require("@octokit/rest");
-const github = new Octokit({auth: process.env.GITHUB_TOKEN, log: console});
+const github = new Octokit({auth: process.env.GITHUB_TOKEN});
 
 const express = require('express');
 const app = express();
@@ -110,8 +110,7 @@ function pullRequest(url, rule, imageURL) {
                             title: `Add website ${url} | from Web-interface`,
                             base: "main",
                             head: "password-manager-resources-bot:" + url,
-                            body: `This Pull Request adds the website ${url}\n` +
-                                `Password Rule validation:` +
+                            body: `Password Rule validation:` +
                                 `![](${imageURL})`,
                             maintainer_can_modify: true
                         }).then(() => {

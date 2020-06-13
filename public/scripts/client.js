@@ -1,4 +1,4 @@
-async function validateForm() {
+function validateForm() {
 
     let url = document.getElementById("url").value;
     const rule = createRuleString();
@@ -13,9 +13,7 @@ async function validateForm() {
         body: JSON.stringify(data)
     };
 
-    fetch('/api', options).then(result => {
-        // console.log(result);
-    });
+    return fetch('/api', options);
 
 }
 
@@ -48,7 +46,7 @@ function uploadFileToServer(file) {
 }
 
 function chooseSpecial() {
-    document.getElementById("choose_special").hidden = document.getElementById("alwd_special").checked;
+    document.getElementById("choose_special").hidden = !document.getElementById("alwd_special").checked;
 }
 
 function clickedCheckbox(source) {
