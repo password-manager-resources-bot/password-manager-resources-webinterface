@@ -107,10 +107,11 @@ function pullRequest(url, rule, imageURL) {
                         github.pulls.create({
                             owner: GITHUB_USER, //TODO change to "apple"
                             repo: GITHUB_REPO,
-                            title: `Add website ${url}`,
+                            title: `Add website ${url} | from Web-interface`,
                             base: "main",
                             head: "password-manager-resources-bot:" + url,
-                            body: "**Don't** pull these changes in, will be closed shortly.\n" +
+                            body: `This Pull Request adds the website ${url}\n` +
+                                `Password Rule validation:` +
                                 `![](${imageURL})`,
                             maintainer_can_modify: true
                         }).then(() => {

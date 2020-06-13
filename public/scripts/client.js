@@ -14,7 +14,7 @@ async function validateForm() {
     };
 
     fetch('/api', options).then(result => {
-        console.log(result);
+        // console.log(result);
     });
 
 }
@@ -27,7 +27,7 @@ function uploadFileToServer(file) {
     reader.readAsBinaryString(file);
 
     reader.onload = function () {
-        console.log(img = btoa(reader.result));
+        img = btoa(reader.result);
 
         const options = {
             method: 'POST',
@@ -39,24 +39,28 @@ function uploadFileToServer(file) {
         };
 
         fetch('/images', options).then(r => {
-            console.log(r);
+            // console.log(r);
         }).catch(err => {
-            console.log(err);
+            // console.log(err);
         });
 
     };
 }
 
+function chooseSpecial() {
+    $("choose_special").hidden = $("alwd_special");
+}
+
 function clickedCheckbox(source) {
 
-    let bool = document.getElementById("req_" + source).checked;
+    let bool = $("req_" + source).checked;
 
-    document.getElementById("min_" + source).hidden = !bool;
-    document.getElementById("alwd_" + source).checked = bool;
-    document.getElementById("alwd_" + source).disabled = bool;
+    $("min_" + source).hidden = !bool;
+    $("alwd_" + source).checked = bool;
+    $("alwd_" + source).disabled = bool;
 
     if (source === 'special') {
-        document.getElementById("choose_" + source).hidden = !bool;
+        chooseSpecial();
     }
 }
 
@@ -74,11 +78,10 @@ function createRuleString() {
 
     let chooseSpecial = document.getElementById("choose_special").value
         = document.getElementById("choose_special").value
-        .replace('\\', '\\\\')
-        .replace('\[', '\\\[')
-        .replace('\]', '\\\]')
-        .replace('\"', '\\\"')
-        .replace("\'", '\\\'')
+        .replace('[', '\[')
+        .replace(']', '\]')
+        .replace('"', '\"')
+        .replace("'", '\'')
 
     charTypes.forEach((type) => {
         let req = document.getElementById("req_" + type).checked;

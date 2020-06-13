@@ -8,9 +8,9 @@
 
 <form id="generator">
 
-    <p>Usage: example.com | don't use subdomains</p>
+    <p>Usage: example.com, don't use 'www.' or subdomains</p>
     <label for="url">Website URL: </label>
-    <input type="text" id="url" name="URL" required><br><br>
+    <input type="text" id="url" name="URL" required placeholder="example.com"><br><br>
 
     <p>Please provide a screenshot, which verifies your password rule!</p>
     <input type="file" id="image" accept="image/png, image/jpeg" required>
@@ -48,11 +48,11 @@
             <td><input type="number" id="min_upper" value="1"></td>
         </tr>
         <tr>
-            <td><label>Special characters -~!@#$%^&*_+=`|(){}[:;"'<>,.?]</label></td>
-            <td><input type="checkbox" id="alwd_special"></td>
+            <td><label>Special characters (?!-;˜...)</label></td>
+            <td><input type="checkbox" id="alwd_special" onsubmit="chooseSpecial()"></td>
             <td><input type="checkbox" id="req_special" onclick="clickedCheckbox('special')"></td>
             <td><input type="number" id="min_special" value="1" hidden></td>
-            <td><input type="text" id="choose_special" hidden></td>
+            <td><input type="text" id="choose_special" hidden placeholder="-~!@#$%^&*_+=`\|(){}[]:;'<>,.?"></td>
         </tr>
         <tr>
             <td><label>ASCII printable chars</label></td>
@@ -71,12 +71,10 @@
 
     <br>
     <p>Please re-validate all your given parameters!</p>
-    <input type="submit" value="Submit Website">
+    <input type="submit" value="Submit website">
 
 </form>
 <script>
-
-    document.getElementById("choose_special").value = "-~!@#$%^&*_+=`\\|(){}[]:;\"'<>,.?";
 
     document.getElementById("image").onchange = function () {
         uploadFileToServer(document.getElementById("image").files[0]);
@@ -86,8 +84,10 @@
         e.preventDefault();
         if ($("#generator").valid()) {
             validateForm().then(res => {
-                console.log(res);
-                window.location.replace("thanks_for_contribute.html"); //TODO open onother html page in same tab
+                //console.log(res);
+                window.location.replace("thanks_for_contribute.html");
+            }).catch(err => {
+                //console.log(err);
             });
         }
     }
@@ -96,4 +96,3 @@
 
 </body>
 <script src="scripts/client.js"></script>
-</html>
