@@ -25,24 +25,20 @@ app.use(express.urlencoded({limit: '10mb'}));
 app.use(express.json());
 
 app.post(`/api`, (request, response) => {
-
-    console.log("received request");
+    //console.log("received request");
     uploadToGitHub(request).then();
     response.end("Request sent");
 
 });
 
 app.post('/images', (req, res) => {
-
-    console.log("got it")
+    //console.log("got it")
     image = req.body.image;
     res.end("Image received");
 });
 
 async function uploadToGitHub(request) {
-    console.log(request.body);
     const imageURL = await uploadImage();
-    console.log(imageURL);
     pullRequest(request.body.url, request.body.rule, imageURL);
 }
 
@@ -71,8 +67,6 @@ function pullRequest(url, rule, imageURL) {
 
     //TODO split into individual functions
 
-    console.log("exec:")
-
     $.getJSON('https://raw.githubusercontent.com/apple/password-manager-resources/main/quirks/password-rules.json', function (passwordRules) {
 
         passwordRules[url] = {'password-rules': rule};
@@ -82,15 +76,13 @@ function pullRequest(url, rule, imageURL) {
             passwordRulesSorted[each] = passwordRules[each];
         });
 
-        console.log("passwordRulesSorted" + passwordRulesSorted);
-
         github.git.getRef({
             owner: "apple",
             repo: GITHUB_REPO,
             ref: "heads/main"
         }).then((data) => {
 
-            console.log("master branch found!");
+            //console.log("main branch found!");
 
             let master_sha = data.data.object.sha;
 
@@ -100,12 +92,12 @@ function pullRequest(url, rule, imageURL) {
                 ref: "refs/heads/" + url,
                 sha: master_sha
             }).then(() => {
-                console.log("Branch created!");
+                //console.log("Branch created!");
 
                 createCommit("quirks/password-rules.json", passwordRulesSorted, url)
                     .then(() => {
                         github.pulls.create({
-                            owner: GITHUB_USER, //TODO change to "apple"
+                            owner: "apple",
                             repo: GITHUB_REPO,
                             title: `Add website ${url} | from Web-interface`,
                             base: "main",
@@ -114,7 +106,7 @@ function pullRequest(url, rule, imageURL) {
                                 `![](${imageURL})`,
                             maintainer_can_modify: true
                         }).then(() => {
-                            console.log("PR created to " + "bot"); //TODO -> apple
+                            console.log("PR created to apple");
                         }).catch((err) => {
                             console.log("Can't create PR!");
                             console.log(err);
@@ -177,11 +169,9 @@ async function createCommit(filename, data, url) {
             sha: commit.data.sha,
         });
 
-        console.log("Committed!");
+        //console.log("Committed!");
 
-        return true;
     } catch (err) {
         console.error(err);
-        return false;
     }
 }
