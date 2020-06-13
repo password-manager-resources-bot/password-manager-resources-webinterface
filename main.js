@@ -25,7 +25,7 @@ app.use(express.json());
 app.post(`/api`, (request, response) => {
 
     console.log("received request");
-    uploadToGitHub(request);
+    uploadToGitHub(request).then();
     response.end("Request sent");
 
 });
@@ -171,7 +171,7 @@ async function createCommit(filename, data, url) {
         await github.git.updateRef({
             owner: GITHUB_USER,
             repo: GITHUB_REPO,
-            ref: "heads" + url,
+            ref: "heads/" + url,
             sha: commit.data.sha,
         });
 

@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html lang="de">
 <head>
     <script src="https://code.jquery.com/jquery-latest.js"></script>
-    <title>Website submit form for password managers</title>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <title>Submit form for password managers</title>
 </head>
 <body>
 
-<form onsubmit="return validateForm()" name="generator">
+<form id="generator">
 
+    <p>Usage: example.com | don't use subdomains</p>
     <label for="url">Website URL: </label>
     <input type="text" id="url" name="URL" required><br><br>
 
-    <label for="image">Upload File:</label><br>
-    <input type="file" id="image" accept="image/png, image/jpeg" required><br><br>
-
+    <p>Please provide a screenshot, which verifies your password rule!</p>
+    <input type="file" id="image" accept="image/png, image/jpeg" required>
+    <br>
+    <h1>Password Rule Generator: </h1>
+    <br>
     <label for="minlength">Minimum Length: </label>
-    <input id="minlength" type="number" class="length" required pattern="[0-9]{1,2}"><br>
+    <input id="minlength" type="number" class="length" pattern="[0-9]{1,2}"><br>
     <label for="maxlength">Maximum Length: </label>
-    <input id="maxlength" type="number" class="length" required pattern="[0-9]{1,2}"><br><br>
+    <input id="maxlength" type="number" class="length" pattern="[0-9]{1,2}"><br><br>
 
     <table>
         <tr>
@@ -67,16 +70,26 @@
     </table>
 
     <br>
+    <p>Please re-validate all your given parameters!</p>
     <input type="submit" value="Submit Website">
 
 </form>
 <script>
 
-    document.getElementById("choose_special").value = "-~!@#$%^&*_+=`|(){}[:;\"'<>,.?]";
+    document.getElementById("choose_special").value = "-~!@#$%^&*_+=`\\|(){}[]:;\"'<>,.?";
 
     document.getElementById("image").onchange = function () {
         uploadFileToServer(document.getElementById("image").files[0]);
     };
+
+    document.getElementById("generator").onsubmit = function (e) {
+        e.preventDefault();
+        if ($("#generator").valid()) {
+            validateForm().then(res => {
+                window.location.replace("thanks_for_contribute.html"); //TODO open onother html page in same tab
+            });
+        }
+    }
 
 </script>
 

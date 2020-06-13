@@ -13,8 +13,9 @@ async function validateForm() {
         body: JSON.stringify(data)
     };
 
-    await fetch('/api', options);
-    return false;
+    fetch('/api', options).then(result => {
+        console.log(result);
+    });
 
 }
 
@@ -79,17 +80,12 @@ function createRuleString() {
         .replace('\"', '\\\"')
         .replace("\'", '\\\'')
 
-    console.log(chooseSpecial)
-
     charTypes.forEach((type) => {
-        console.log(type);//
         let req = document.getElementById("req_" + type).checked;
         if (req) {
-            console.log(req)//
             required = required.concat("required: ");
             let i = 0;
             while (i < document.getElementById("min_" + type).value) {
-                console.log("running...")//
                 if (type === "special")
                     allowed = allowed.concat(`[${chooseSpecial}], `)
                 else
