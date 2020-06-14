@@ -75,10 +75,10 @@ function createRuleString() {
     let allowed = "allowed: "
 
     let chooseSpecial = document.getElementById("choose_special").value
-        .replace('[', '\\[')
-        .replace(']', '\\]')
-        .replace('"', '\\"')
-        .replace("'", "\\'")
+        .replace('[', '\[')
+        .replace(']', '\]')
+        .replace('"', '\"')
+        .replace("'", "\'")
 
     charTypes.forEach((type) => {
         let req = document.getElementById("req_" + type).checked;
