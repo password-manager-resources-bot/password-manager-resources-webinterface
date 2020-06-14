@@ -1,153 +1,95 @@
 <!DOCTYPE html>
 <head>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="assets/styles/rule_generator.css">
     <title>Submit form for password managers</title>
 </head>
 <body>
-    <div class="container container-small">
-        <div class="py-5 text-center">
-            <img class="d-block mx-auto mb-4"
-                 src="https://avatars0.githubusercontent.com/u/66650057?s=400&u=ac2b705c9714c246803ac500244e13c597bd9c1a&v=4"
-                 alt="" width="72" height="72">
-            <h2>Password Rule Generator:</h2>
-            <p class="lead">Below is a form that can be used so creators of password managers can collaborate on
-                resources to make password management better for users .</p>
-        </div>
-        <div class="row">
-            <div class="col-md-12 order-md-1">
-                <form id="generator" class="needs-validation" novalidate="">
-                    <h4 class="mb-3">General Information</h4>
-                    <div class="mb-3">
-                        <label for="url">Website URL</label>
-                        <input type="url" id="url" class="form-control" name="URL"  placeholder="example.com" required>
-                        <div class="invalid-feedback"> Please enter a valid url. Do not use 'www.' or subdomains.</div>
-                        <small class="text-muted">Do not use 'www.' or subdomains</small>
-                    </div>
-                    <div class="mb-3">
-                        <label >Screenshot</label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="image" accept="image/png, image/jpeg"
-                                   required>
-                            <label class="custom-file-label" for="image">Choose file</label>
-                            <small class="text-muted">
-                                Please provide a screenshot, which verifies your password rule
-                            </small>
-                        </div>
-                    </div>
-                    <hr class="mb-4">
-                    <h4 class="mb-3">Password Rules</h4>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="minlength">Minimum Length</label>
-                            <input id="minlength" type="number" class="form-control length" pattern="[0-9]{1,2}">
-                            <div class="invalid-feedback"> Valid minimum length is required. </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="maxlength">Maximum Length</label>
-                            <input id="maxlength" type="number" class="form-control length" pattern="[0-9]{1,2}">
-                            <div class="invalid-feedback"> Valid maximum length is required. </div>
-                        </div>
-                    </div>
-                    <table class="table table-bordered">
-                        <tr>
-                            <th scope="col">Chars</th>
-                            <th scope="col">Allowed</th>
-                            <th scope="col">Required</th>
-                            <th scope="col">Minimal occurrences</th>
-                        </tr>
-                        <tr>
-                            <td><label>Digits (0-9)</label></td>
-                            <td><input class="form-control" type="checkbox" id="alwd_digit" disabled checked></td>
-                            <td><input class="form-control" type="checkbox" id="req_digit"
-                                       onclick="clickedCheckbox('digit')" checked></td>
-                            <td><input class="form-control" type="number" id="min_digit" value="1"></td>
-                        </tr>
-                        <tr>
-                            <td><label>Lower case letters (a-z)</label></td>
-                            <td><input class="form-control" type="checkbox" id="alwd_lower" disabled checked></td>
-                            <td><input class="form-control" type="checkbox" id="req_lower"
-                                       onclick="clickedCheckbox('lower')" checked></td>
-                            <td><input class="form-control" type="number" id="min_lower" value="1"></td>
-                        </tr>
-                        <tr>
-                            <td><label>Upper case letters (A-Z)</label></td>
-                            <td><input class="form-control" type="checkbox" id="alwd_upper" disabled checked></td>
-                            <td><input class="form-control" type="checkbox" id="req_upper"
-                                       onclick="clickedCheckbox('upper')" checked></td>
-                            <td><input class="form-control" type="number" id="min_upper" value="1"></td>
-                        </tr>
-                        <tr>
-                            <td><label>Special characters (?!-;˜...)</label></td>
-                            <td><input class="form-control" type="checkbox" id="alwd_special"
-                                       onclick="chooseSpecial()"></td>
-                            <td><input class="form-control" type="checkbox" id="req_special"
-                                       onclick="clickedCheckbox('special')"></td>
-                            <td><input class="form-control" type="number" id="min_special" value="1" hidden></td>
-                        </tr>
-                        <tr id="choose_special_container" hidden>
-                            <td><label>Allowed special characters</label></td>
-                            <td colspan="3">
-                                <input class="form-control" type="text" id="choose_special"
-                                       placeholder="-~!@#$%^&*_+=`\|(){}[]:;'<>,.?">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>ASCII printable chars</label></td>
-                            <td><input type="checkbox" id="alwd_ascii"></td>
-                            <td><input type="checkbox" id="req_ascii" onclick="clickedCheckbox('ascii')"></td>
-                            <td><input type="number" id="min_ascii" value="1" hidden></td>
-                        </tr>
-                        <tr>
-                            <td><label>Unicode chars</label></td>
-                            <td><input type="checkbox" id="alwd_unicode"></td>
-                            <td><input type="checkbox" id="req_unicode" onclick="clickedCheckbox('unicode')"></td>
-                            <td><input type="number" id="min_unicode" value="1" hidden></td>
-                        </tr>
-                    </table>
-                    <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Submit website</button>
-                </form>
-            </div>
-        </div>
-        <footer class="my-5 pt-5 text-muted text-center text-small">
-            <p class="mb-1">Made with <span style="color: #e25555;">&hearts;
-            </span> for <a href="https://github.com/apple/password-manager-resources">Apple</a></p>
-            <ul class="list-inline">
-                <li class="list-inline-item"><a href="https://github.com/password-manager-resources-bot">Github</a></li>
-            </ul>
-        </footer>
-    </div>
-    <script>
-        document.getElementById("image").onchange = function () {
-            // TODO: This needs validation and should not be uploaded until the submit button is clicked
-            let fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-            uploadFileToServer(document.getElementById("image").files[0]);
-        };
 
-        document.getElementById("generator").onsubmit = function (e) {
-            e.preventDefault();
-            if ($("#generator").valid()) {
-                validateForm().then(() => {
-                    window.location.replace("thanks_for_contribute.html");
-                }).catch();
-            }
-        };
-    </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-            crossorigin="anonymous">
-    </script>
+<form id="generator">
+
+    <p>Usage: example.com, don't use 'www.' or subdomains</p>
+    <label for="url">Website URL: </label>
+    <input type="text" id="url" name="URL" required placeholder="example.com"><br><br>
+
+    <p>Please provide a screenshot, which verifies your password rule!</p>
+    <input type="file" id="image" accept="image/png, image/jpeg" required>
+    <br>
+    <h1>Password Rule Generator: </h1>
+    <br>
+    <label for="minlength">Minimum Length: </label>
+    <input id="minlength" type="number" class="length" pattern="[0-9]{1,2}"><br>
+    <label for="maxlength">Maximum Length: </label>
+    <input id="maxlength" type="number" class="length" pattern="[0-9]{1,2}"><br><br>
+
+    <table>
+        <tr>
+            <th>Chars</th>
+            <th>Allowed</th>
+            <th>Required</th>
+            <th>Minimal occurrences</th>
+        </tr>
+        <tr>
+            <td><label>Digits (0-9)</label></td>
+            <td><input type="checkbox" id="alwd_digit" disabled checked></td>
+            <td><input type="checkbox" id="req_digit" onclick="clickedCheckbox('digit')" checked></td>
+            <td><input type="number" id="min_digit" value="1"></td>
+        </tr>
+        <tr>
+            <td><label>Lower case letters (a-z)</label></td>
+            <td><input type="checkbox" id="alwd_lower" disabled checked></td>
+            <td><input type="checkbox" id="req_lower" onclick="clickedCheckbox('lower')" checked></td>
+            <td><input type="number" id="min_lower" value="1"></td>
+        </tr>
+        <tr>
+            <td><label>Upper case letters (A-Z)</label></td>
+            <td><input type="checkbox" id="alwd_upper" disabled checked></td>
+            <td><input type="checkbox" id="req_upper" onclick="clickedCheckbox('upper')" checked></td>
+            <td><input type="number" id="min_upper" value="1"></td>
+        </tr>
+        <tr>
+            <td><label>Special characters (?!-;˜...)</label></td>
+            <td><input type="checkbox" id="alwd_special" onclick="chooseSpecial()"></td>
+            <td><input type="checkbox" id="req_special" onclick="clickedCheckbox('special')"></td>
+            <td><input type="number" id="min_special" value="1" hidden></td>
+            <td><input type="text" id="choose_special" hidden placeholder="-~!@#$%^&*_+=`\|(){}[]:;'<>,.?"></td>
+        </tr>
+        <tr>
+            <td><label>ASCII printable chars</label></td>
+            <td><input type="checkbox" id="alwd_ascii"></td>
+            <td><input type="checkbox" id="req_ascii" onclick="clickedCheckbox('ascii')"></td>
+            <td><input type="number" id="min_ascii" value="1" hidden></td>
+        </tr>
+        <tr>
+            <td><label>Unicode chars</label></td>
+            <td><input type="checkbox" id="alwd_unicode"></td>
+            <td><input type="checkbox" id="req_unicode" onclick="clickedCheckbox('unicode')"></td>
+            <td><input type="number" id="min_unicode" value="1" hidden></td>
+        </tr>
+
+    </table>
+
+    <br>
+    <p>Please re-validate all your given parameters!</p>
+    <input type="submit" value="Submit website">
+
+</form>
+<script>
+
+    document.getElementById("image").onchange = function () {
+        uploadFileToServer(document.getElementById("image").files[0]);
+    };
+
+    document.getElementById("generator").onsubmit = function (e) {
+        e.preventDefault();
+        if ($("#generator").valid()) {
+            validateForm().then(() => {
+                window.location.replace("thanks_for_contribute.html");
+            }).catch();
+        }
+    }
+
+</script>
+
 </body>
 <script src="scripts/client.js"></script>
