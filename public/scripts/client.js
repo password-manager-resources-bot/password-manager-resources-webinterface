@@ -86,7 +86,7 @@ function createRuleString() {
             required = required.concat("required: ");
             let i = 0;
             while (i < document.getElementById("min_" + type).value) {
-                if (type === "special" && chooseSpecial != null)
+                if (type === "special" && chooseSpecial !== "")
                     allowed = allowed.concat(`[${chooseSpecial}], `)
                 else
                     required = required.concat(type, ', ');
@@ -94,7 +94,7 @@ function createRuleString() {
             }
         } else {
             if (document.getElementById("alwd_" + type).checked) {
-                if (type === "special" && chooseSpecial != null)
+                if (type === "special" && chooseSpecial !== "")
                     allowed = allowed.concat(`[${chooseSpecial}], `)
                 else
                     allowed = allowed.concat(type + ', ')
