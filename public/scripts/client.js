@@ -89,7 +89,7 @@ function createRuleString() {
                 if (type === "special" && chooseSpecial !== "")
                     allowed = allowed.concat(`[${chooseSpecial}], `)
                 else
-                    required = required.concat(type, ', ');
+                    required = required.concat(type, '; ');
                 i++;
             }
         } else {
@@ -97,15 +97,11 @@ function createRuleString() {
                 if (type === "special" && chooseSpecial !== "")
                     allowed = allowed.concat(`[${chooseSpecial}], `)
                 else
-                    allowed = allowed.concat(type + ', ')
+                    allowed = allowed.concat(type + '; ')
             }
         }
     });
 
-    allowed = allowed.slice(0, allowed.length - 2);
-    if (allowed === "allowed")
-        required = required.slice(0, required.length - 2);
-
-    return rule.concat(required, allowed === "allowed" ? "" : allowed);
+    return rule.concat(required, allowed === "allowed: " ? "" : allowed);
 
 }
