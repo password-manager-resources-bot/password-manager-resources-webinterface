@@ -67,7 +67,14 @@ function createRuleString() {
     let minlength = document.getElementById("minlength").value;
     let maxlength = document.getElementById("maxlength").value;
 
-    let rule = `minlength: ${minlength}, maxlength: ${maxlength}, `;
+    let rule = "";
+
+    if (maxlength != null && maxlength !== 0) {
+        rule = rule.concat(`minlength: ${minlength};`);
+    }
+    if (minlength != null && maxlength !== 0) {
+        rule = rule.concat(`maxlength: ${maxlength}; `);
+    }
 
     let charTypes = ["upper", "lower", "digit", "unicode", "ascii", "special"]
 
