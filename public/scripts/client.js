@@ -1,9 +1,10 @@
-function validateForm() {
+async function validateForm() {
 
+    let img = await imageToBase64(imageToBase64(document.getElementById("image").files[0]));
     let url = document.getElementById("url").value;
     const rule = createRuleString();
 
-    const data = {url: url, rule: rule};
+    const data = {url: url, rule: rule, image: img};
 
     const options = {
         method: 'POST',
@@ -18,30 +19,13 @@ function validateForm() {
 }
 
 
-function uploadFileToServer(file) {
+async function imageToBase64(file) {
 
-    let img;
     const reader = new FileReader();
     reader.readAsBinaryString(file);
 
-    reader.onload = function () {
-        img = btoa(reader.result);
-
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({image: img}),
-            processData: false
-        };
-
-        fetch('/images', options).then(r => {
-            // console.log(r);
-        }).catch(err => {
-            // console.log(err);
-        });
-
+    return await reader.onload = function () {
+        return btoa(reader.result);
     };
 }
 
@@ -81,7 +65,14 @@ function createRuleString() {
     let required = ""
     let allowed = "allowed: "
 
-    let chooseSpecial = document.getElementById("choose_special").value;
+    let specialChars = document.getElementById("choose_special").value;
+
+    if(specialChars.contains("]")){
+        specialChars = specialChars.replace("]", "").concat("]");
+    }
+    if(specialChars.contains("-")){
+        specialChars = "-".concat(specialChars.replace("-", ""));
+    }
 
     charTypes.forEach((type) => {
         let req = document.getElementById("req_" + type).checked;
@@ -89,16 +80,16 @@ function createRuleString() {
             required = required.concat("required: ");
             let i = 0;
             while (i < document.getElementById("min_" + type).value) {
-                if (type === "special" && chooseSpecial !== "")
-                    allowed = allowed.concat(`[${chooseSpecial}], `)
+                if (type === "special" && specialChars !== "")
+                    allowed = allowed.concat(`[${specialChars}], `)
                 else
                     required = required.concat(type, '; ');
                 i++;
             }
         } else {
             if (document.getElementById("alwd_" + type).checked) {
-                if (type === "special" && chooseSpecial !== "")
-                    allowed = allowed.concat(`[${chooseSpecial}], `)
+                if (type === "special" && specialChars !== "")
+                    allowed = allowed.concat(`[${specialChars}], `)
                 else
                     allowed = allowed.concat(type + '; ')
             }

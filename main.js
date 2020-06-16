@@ -13,8 +13,6 @@ const github = new Octokit({auth: process.env.GITHUB_TOKEN});
 const express = require('express');
 const app = express();
 
-let image = "";
-
 const GITHUB_USER = "password-manager-resources-bot";
 const GITHUB_REPO = "password-manager-resources";
 
@@ -31,18 +29,12 @@ app.post(`/api`, (request, response) => {
 
 });
 
-app.post('/images', (req, res) => {
-    //console.log("got it")
-    image = req.body.image;
-    res.end("Image received");
-});
-
 async function uploadToGitHub(request) {
-    const imageURL = await uploadImage();
-    pullRequest(request.body.url, request.body.rule, imageURL);
+    const imageURL = await uploadImage(request.body.image);
+    await githubRequest(request.body.url, request.body.rule, imageURL);
 }
 
-function uploadImage() {
+function uploadImage(base64) {
 
     return new Promise((resolve, reject) => {
         request.post({
@@ -50,7 +42,7 @@ function uploadImage() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                formData: {image: image, key: process.env.IMGBB_API_KEY}
+                formData: {image: base64, key: process.env.IMGBB_API_KEY}
             },
             (err, httpResponse, body) => {
                 if (err) {
@@ -63,64 +55,50 @@ function uploadImage() {
 
 }
 
-function pullRequest(url, rule, imageURL) {
+async function githubRequest(url, rule, imageURL) {
 
     //TODO split into individual functions
 
-    $.getJSON('https://raw.githubusercontent.com/apple/password-manager-resources/main/quirks/password-rules.json', function (passwordRules) {
+    const jsonFile = await $.getJSON('https://raw.githubusercontent.com/apple/password-manager-resources/main/quirks/password-rules.json');
 
-        passwordRules[url] = {'password-rules': rule};
+    jsonFile[url] = {'password-rules': rule};
 
-        let passwordRulesSorted = {};
-        Object.keys(passwordRules).sort().forEach(each => {
-            passwordRulesSorted[each] = passwordRules[each];
-        });
-
-        github.git.getRef({
-            owner: "apple",
-            repo: GITHUB_REPO,
-            ref: "heads/main"
-        }).then((data) => {
-
-            //console.log("main branch found!");
-
-            let master_sha = data.data.object.sha;
-
-            github.git.createRef({
-                owner: GITHUB_USER,
-                repo: GITHUB_REPO,
-                ref: "refs/heads/" + url,
-                sha: master_sha
-            }).then(() => {
-                //console.log("Branch created!");
-
-                createCommit("quirks/password-rules.json", passwordRulesSorted, url)
-                    .then(() => {
-                        github.pulls.create({
-                            owner: "apple",
-                            repo: GITHUB_REPO,
-                            title: `Add website ${url} | from Web-interface`,
-                            base: "main",
-                            head: "password-manager-resources-bot:" + url,
-                            body: `Password Rule validation:` +
-                                `![](${imageURL})`,
-                            maintainer_can_modify: true
-                        }).then(() => {
-                            console.log("PR created to apple");
-                        }).catch((err) => {
-                            console.log("Can't create PR!");
-                            console.log(err);
-                        });
-                    });
-            }).catch((err) => {
-                console.log("Branch can't be created. It already exists.")
-                console.log(err);
-            });
-        }).catch((err) => {
-            console.log("Can't find master branch!");
-            console.log(err);
-        });
+    let passwordRulesSorted = {};
+    Object.keys(jsonFile).sort().forEach(each => {
+        passwordRulesSorted[each] = jsonFile[each];
     });
+
+    const response = await github.git.getRef({
+        owner: "apple",
+        repo: GITHUB_REPO,
+        ref: "heads/main"
+    });
+
+    await github.git.createRef({
+        owner: GITHUB_USER,
+        repo: GITHUB_REPO,
+        ref: "refs/heads/" + url,
+        sha: response.data.object.sha
+    });
+
+    await createCommit("quirks/password-rules.json", passwordRulesSorted, url);
+
+    await github.pulls.create({
+        owner: "apple",
+        repo: GITHUB_REPO,
+        title: `Add website ${url} | from Web-interface`,
+        base: "main",
+        head: "password-manager-resources-bot:" + url,
+        body: `Password Rule validation:` +
+            `![](${imageURL})`,
+        maintainer_can_modify: true
+    }).then(() => {
+        console.log("PR created to apple");
+    }).catch((err) => {
+        console.log("Can't create PR!");
+        console.log(err);
+    });
+
 }
 
 async function createCommit(filename, data, url) {

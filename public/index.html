@@ -90,7 +90,7 @@
                             <td><label>Allowed special characters</label></td>
                             <td colspan="3">
                                 <input class="form-control" type="text" id="choose_special"
-                                       placeholder="-~!@#$%^&*_+=`\|(){}[]:;'<>,.?">
+                                       placeholder="-~!@#$%^&*_+=`\|(){}:;'<>,.?[]">
                             </td>
                         </tr>
                         <tr>
@@ -121,10 +121,8 @@
     </div>
     <script>
         document.getElementById("image").onchange = function () {
-            // TODO: This needs validation and should not be uploaded until the submit button is clicked
             let fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-            uploadFileToServer(document.getElementById("image").files[0]);
         };
 
         document.getElementById("generator").onsubmit = function (e) {
