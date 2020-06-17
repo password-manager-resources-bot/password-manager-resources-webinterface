@@ -52,7 +52,6 @@ function uploadImage(base64) {
                 resolve(JSON.parse(body).data.url);
             });
     });
-
 }
 
 async function githubRequest(url, rule, imageURL) {

@@ -1,8 +1,9 @@
-async function validateForm() {
+async function validateForm(img) {
 
-    let img = await imageToBase64(document.getElementById("image").files[0]);
     let url = document.getElementById("url").value;
     const rule = createRuleString();
+
+    console.log(rule);
 
     const data = {url: url, rule: rule, image: img};
 
@@ -19,14 +20,13 @@ async function validateForm() {
 }
 
 
-async function imageToBase64(file) {
+async function imageToBase64(file, callback) {
 
     const reader = new FileReader();
-    reader.readAsBinaryString(file);
-
-    return reader.onload = function () {
-        return btoa(reader.result);
+    reader.onload = function () {
+        callback(btoa(reader.result));
     };
+    reader.readAsBinaryString(file);
 }
 
 function chooseSpecial() {
@@ -51,12 +51,14 @@ function createRuleString() {
     let minlength = document.getElementById("minlength").value;
     let maxlength = document.getElementById("maxlength").value;
 
+    console.log(maxlength);
+
     let rule = "";
 
-    if (maxlength != null && maxlength !== 0) {
-        rule = rule.concat(`minlength: ${minlength};`);
+    if (minlength !== "" && minlength > 0) {
+        rule = rule.concat(`minlength: ${minlength}; `);
     }
-    if (minlength != null && maxlength !== 0) {
+    if (maxlength !== "" && maxlength > 0) {
         rule = rule.concat(`maxlength: ${maxlength}; `);
     }
 
@@ -96,6 +98,10 @@ function createRuleString() {
         }
     });
 
-    return rule.concat(required, allowed === "allowed: " ? "" : allowed);
+    allowed = allowed.trimEnd();
+
+    console.log(allowed)
+
+    return rule.concat(required, allowed === "allowed:" ? "" : allowed.slice(0, allowed.length - 1).concat(";"));
 
 }
