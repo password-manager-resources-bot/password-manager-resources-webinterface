@@ -91,7 +91,7 @@ function createRuleString() {
                 if (type === "special" && specialChars !== "")
                     allowed = allowed.concat(`[${specialChars}], `)
                 else
-                    allowed = allowed.concat(type + '; ')
+                    allowed = allowed.concat(type + ', ')
             }
         }
     });
