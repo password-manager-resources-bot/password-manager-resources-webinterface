@@ -24,7 +24,7 @@ async function imageToBase64(file) {
     const reader = new FileReader();
     reader.readAsBinaryString(file);
 
-    return await reader.onload = function () {
+    return reader.onload = function () {
         return btoa(reader.result);
     };
 }
@@ -67,10 +67,10 @@ function createRuleString() {
 
     let specialChars = document.getElementById("choose_special").value;
 
-    if(specialChars.contains("]")){
+    if (specialChars.contains("]")) {
         specialChars = specialChars.replace("]", "").concat("]");
     }
-    if(specialChars.contains("-")){
+    if (specialChars.contains("-")) {
         specialChars = "-".concat(specialChars.replace("-", ""));
     }
 
