@@ -1,6 +1,6 @@
 async function validateForm() {
 
-    let img = await imageToBase64(imageToBase64(document.getElementById("image").files[0]));
+    let img = await imageToBase64(document.getElementById("image").files[0]);
     let url = document.getElementById("url").value;
     const rule = createRuleString();
 
@@ -67,10 +67,10 @@ function createRuleString() {
 
     let specialChars = document.getElementById("choose_special").value;
 
-    if (specialChars.contains("]")) {
+    if (specialChars.includes("]")) {
         specialChars = specialChars.replace("]", "").concat("]");
     }
-    if (specialChars.contains("-")) {
+    if (specialChars.includes("-")) {
         specialChars = "-".concat(specialChars.replace("-", ""));
     }
 
