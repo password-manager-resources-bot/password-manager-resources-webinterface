@@ -56,8 +56,6 @@ function uploadImage(base64) {
 
 async function githubRequest(url, rule, imageURL) {
 
-    //TODO split into individual functions
-
     const jsonFile = await $.getJSON('https://raw.githubusercontent.com/apple/password-manager-resources/main/quirks/password-rules.json');
 
     jsonFile[url] = {'password-rules': rule};
