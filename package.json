@@ -10,7 +10,7 @@
     "express": "^4.17.1",
     "imgbb-uploader": "^1.0.3",
     "jquery": "^3.5.1",
-    "jsdom": "^16.2.2",
+    "jsdom": "^16.5.0",
     "request": "^2.88.2"
   },
   "description": "Web-interface for apple's password-manager-resource repo"
